@@ -6,5 +6,5 @@ from .get_models import get_models
 def run_all_models():
   config = load_config()
   models = get_models()
-  # preprocess_images(config)
+  preprocess_images(config)
   do_threads(models, config)
