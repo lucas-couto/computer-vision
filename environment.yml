@@ -1,4 +1,4 @@
-name: computer-vision
+name: cnn-binary-detector
 channels:
   - defaults
   - https://repo.anaconda.com/pkgs/main
