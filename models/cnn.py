@@ -22,6 +22,7 @@ class Cnn():
         self.monitor_metric = "val_loss" if self.validation_data is not None else "loss"
 
         self.best_model_path = "checkpoints/cnn.keras"
+        self.best_weights_path = "checkpoints/cnn.weights.h5"
         self.model = self.build_model()
 
 
@@ -85,9 +86,10 @@ class Cnn():
 
     def train(self):
         model_checkpoint = ModelCheckpoint(
-            filepath=self.best_model_path,
+            filepath=self.best_weights_path,
             monitor=self.monitor_metric,
             save_best_only=True,
+            save_weights_only=True,
             mode="min" if "loss" in self.monitor_metric or "error" in self.monitor_metric else "max",
             verbose=1
         )
@@ -111,6 +113,7 @@ class Cnn():
         
         self.model.fit(
             self.train_data,
+            validation_freq=2,
             epochs=self.epochs,
             batch_size=self.batch_size,
             validation_data=self.validation_data,
@@ -119,7 +122,8 @@ class Cnn():
 
     def evaluate(self):
         # 1) Carrega o melhor modelo salvo pelo checkpoint
-        best_model = load_model(self.best_model_path)
+        best_model = self.build_model()
+        best_model.load_weights(self.best_weights_path)
 
         # 2) Probabilidades no conjunto de validação
         proba = best_model.predict(self.validation_data, verbose=0)
@@ -160,3 +164,9 @@ class Cnn():
     
     def predict(self, X):
         return self.model.predict(X)
+
+    def save_model(self):
+        # garante que os melhores pesos estão carregados
+        self.model.load_weights(self.best_weights_path)
+        self.model.save(self.best_model_path)
+        print(f"Modelo completo salvo em: {self.best_model_path}")
