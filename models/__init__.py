@@ -1,21 +1,21 @@
 from .cnn import Cnn
-from .densenet import DensenetModel
+from .densenet import Densenet
 from .xception import XceptionModel
-from .resnet50 import Resnet50Model
-from .convnext import ConvNeXtBaseModel
-from .efficientnet import EfficientNetB7Model
-from .inception import InceptionResNetV2Model
-from .nasnetlarge import NASNetLargeModel
-from .resnet152 import ResNet152Model
+from .resnet50 import Resnet50
+from .convnext import Convnext
+from .efficientnet import Efficientnet
+from .inception import Inception
+from .nasnet import Nasnet
+from .resnet152 import Resnet152
 
 __all__ = [
     Cnn,
-    DensenetModel, 
+    Densenet, 
     XceptionModel, 
-    Resnet50Model,
-    ConvNeXtBaseModel,
-    EfficientNetB7Model,
-    InceptionResNetV2Model,
-    NASNetLargeModel,
-    ResNet152Model
+    Resnet50,
+    Convnext,
+    Efficientnet,
+    Inception,
+    Nasnet,
+    Resnet152
 ]
