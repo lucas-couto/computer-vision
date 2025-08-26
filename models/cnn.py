@@ -1,7 +1,6 @@
 from keras import layers, models
 from keras.optimizers import Adam
 from utils.save_results import save_results
-from tensorflow.keras.models import load_model
 from keras.metrics import Precision, Recall, AUC
 from utils.find_best_threshold import find_best_threshold
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
@@ -121,9 +120,7 @@ class Cnn():
         )
 
     def evaluate(self):
-        # 1) Carrega o melhor modelo salvo pelo checkpoint
-        best_model = self.build_model()
-        best_model.load_weights(self.best_weights_path)
+        best_model = self.model.load_weights(self.best_weights_path)
 
         # 2) Probabilidades no conjunto de validação
         proba = best_model.predict(self.validation_data, verbose=0)
@@ -165,7 +162,7 @@ class Cnn():
     def predict(self, X):
         return self.model.predict(X)
 
-    def save_model(self):
+    def save(self):
         # garante que os melhores pesos estão carregados
         self.model.load_weights(self.best_weights_path)
         self.model.save(self.best_model_path)

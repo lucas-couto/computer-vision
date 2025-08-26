@@ -2,7 +2,6 @@ from keras import layers, models
 from keras.optimizers import Adam
 from keras.applications import ResNet152
 from utils.save_results import save_results
-from tensorflow.keras.models import load_model
 from keras.metrics import Precision, Recall, AUC
 from utils.find_best_threshold import find_best_threshold
 from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
@@ -23,6 +22,7 @@ class ResNet152Model:
         self.monitor_metric = "val_loss" if self.validation_data is not None else "loss"
 
         self.best_model_path = "checkpoints/resnet152.keras"
+        self.best_weights_path = "checkpoints/resnet152.weights.h5"
         self.model = self.build_model()
         
     def build_model(self):
@@ -57,9 +57,10 @@ class ResNet152Model:
     
     def train(self):
         model_checkpoint = ModelCheckpoint(
-            filepath=self.best_model_path,
+            filepath=self.best_weights_path,
             monitor=self.monitor_metric,
             save_best_only=True,
+            save_weights_only=True,
             mode="min" if "loss" in self.monitor_metric or "error" in self.monitor_metric else "max",
             verbose=1
         )
@@ -83,6 +84,7 @@ class ResNet152Model:
         
         self.model.fit(
             self.train_data,
+            validation_freq=2,
             epochs=self.epochs,
             batch_size=self.batch_size,
             validation_data=self.validation_data,
@@ -91,7 +93,7 @@ class ResNet152Model:
 
     def evaluate(self):
         # 1) Carrega o melhor modelo salvo pelo checkpoint
-        best_model = load_model(self.best_model_path)
+        best_model = self.model.load_weights(self.best_weights_path)
 
         # 2) Probabilidades no conjunto de validação
         proba = best_model.predict(self.validation_data, verbose=0)
@@ -129,3 +131,8 @@ class ResNet152Model:
         }
         save_results("resnet152", data)
         return data
+    
+    def save(self):
+        self.model.load_weights(self.best_weights_path)
+        self.model.save(self.best_model_path)
+        print(f"Modelo completo salvo em: {self.best_model_path}")

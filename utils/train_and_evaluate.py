@@ -5,6 +5,7 @@ def train_and_evaluate(model_class, config, data):
     model = model_class(config, data)
     model.train()
     results = model.evaluate()
+    model.save()
     print(f"{model_class.__name__} results: {results}")
     
     del model
