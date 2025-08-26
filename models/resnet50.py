@@ -4,10 +4,7 @@ from keras.applications import ResNet50
 
 class Resnet50(BaseModel):
     def __init__(self, config, data):
-        self.best_model_path = "checkpoints/resnet50.keras"
-        self.best_weights_path = "checkpoints/resnet50.weights.h5"
-        
-        super().__init__(config, data)
+        super().__init__(config, data, checkpoint_dir="checkpoints/resnet50")
 
     
     def build_model(self):

@@ -4,9 +4,7 @@ from keras.applications import DenseNet121
 
 class Densenet(BaseModel):
     def __init__(self, config, data):
-        self.best_model_path = "checkpoints/densenet.keras"
-        self.best_weights_path = "checkpoints/densenet.weights.h5"
-        super().__init__(config, data)
+        super().__init__(config, data, checkpoint_dir="checkpoints/densenet")
 
     def build_model(self):
         base_model = DenseNet121(weights='imagenet', include_top=False, input_shape=self.input_shape)

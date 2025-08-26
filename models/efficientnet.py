@@ -4,9 +4,7 @@ from keras.applications import EfficientNetB7
 
 class Efficientnet(BaseModel):
     def __init__(self, config, data):
-        self.best_model_path = "checkpoints/efficientnet.keras"
-        self.best_weights_path = "checkpoints/efficientnet.weights.h5"
-        super().__init__(config, data)
+        super().__init__(config, data, checkpoint_dir="checkpoints/efficientnet")
 
     def build_model(self):
         base_model = EfficientNetB7(weights='imagenet', include_top=False, input_shape=self.input_shape)

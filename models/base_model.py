@@ -1,19 +1,18 @@
 # base_model.py
+import os
+import tensorflow as tf
+from keras.optimizers import Adam
 from abc import ABC, abstractmethod
 from typing import Any, Dict, Tuple
-
-from keras.optimizers import Adam
-from keras.metrics import Precision, Recall, AUC
-from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
-
-from sklearn.metrics import precision_score, recall_score, roc_auc_score, classification_report
-
 from utils.save_results import save_results
+from keras.metrics import Precision, Recall, AUC
 from utils.find_best_threshold import find_best_threshold
+from tensorflow.keras.callbacks import ModelCheckpoint, EarlyStopping, ReduceLROnPlateau
+from sklearn.metrics import precision_score, recall_score, roc_auc_score, classification_report
 
 
 class BaseModel(ABC):
-    def __init__(self, config: Dict[str, Any], data: Tuple[Any, Any, Any, Any]):
+    def __init__(self, config: Dict[str, Any], data: Tuple[Any, Any, Any, Any], checkpoint_dir="checkpoints/model"):
         # Config
         self.epochs = config['training']['epochs']
         self.num_classes = config['model']['num_classes']
@@ -30,8 +29,10 @@ class BaseModel(ABC):
 
         self.monitor_metric = "val_loss" if self.validation_data is not None else "loss"
 
-        self.best_model_path = "checkpoints/model.keras"
-        self.best_weights_path = "checkpoints/model.weights.h5"
+        self.best_model_path   = os.path.join(checkpoint_dir, "pb")
+        self.best_weights_path = os.path.join(checkpoint_dir, "model.weights.h5")
+        
+        os.makedirs(checkpoint_dir, exist_ok=True)
 
         self.model = self.build_model()
         self.model.compile(
@@ -130,5 +131,8 @@ class BaseModel(ABC):
 
     def save(self):
         self.model.load_weights(self.best_weights_path)
-        self.model.save(self.best_model_path)
+        
+        os.makedirs(self.best_model_path, exist_ok=True)
+        tf.saved_model.save(self.model, self.best_model_path)
+        
         print(f"Modelo completo salvo em: {self.best_model_path}")

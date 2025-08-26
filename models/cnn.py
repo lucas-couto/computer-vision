@@ -4,10 +4,7 @@ from .base_model import BaseModel
 
 class Cnn(BaseModel):
     def __init__(self, config, data):
-        self.best_model_path = "checkpoints/cnn.keras"
-        self.best_weights_path = "checkpoints/cnn.weights.h5"
-        
-        super().__init__(config, data)
+        super().__init__(config, data, checkpoint_dir="checkpoints/cnn")
 
     def build_model(self):
         model = models.Sequential()

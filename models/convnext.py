@@ -4,9 +4,7 @@ from keras.applications import ConvNeXtBase
 
 class Convnext(BaseModel):
     def __init__(self, config, data):
-        self.best_model_path = "checkpoints/convnext.keras"
-        self.best_weights_path = "checkpoints/convnext.weights.h5"
-        super().__init__(config, data)
+        super().__init__(config, data, checkpoint_dir="checkpoints/convnext")
 
 
     def build_model(self):
